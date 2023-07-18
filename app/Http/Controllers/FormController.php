@@ -17,6 +17,7 @@ class FormController extends Controller
 
     function form1_data(Request $request) {
         // dd( $request->all() );
+
         // dd( $request->except('_token') );
         // dd( $request->only('_token', 'name') );
 
@@ -84,6 +85,41 @@ class FormController extends Controller
 
         dd($request->all());
     }
+    function form4() {
+        // dd(time());
+        return view('forms.form4');
+    }
 
-    
+    function form4_data(Request $request) {
+
+        $name = rand(). time(). $request->file('image')->getClientOriginalName();
+        $request->file('image')->move(public_path('uploads'), $name);
+
+        // move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/'.$_FILES['image']['name']); // PHP Pure
+    }
+    function form5() {
+        return view('forms.form5');
+    }
+
+    function form5_data (Request $request) {
+        // dd($request->all());
+        // Validate
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'subject' => 'required',
+            'message' => 'required'
+        ]);
+
+        $data = $request->except('_token');
+
+        date_default_timezone_set('Asia/Gaza');
+        // Upload CV
+        $ex = $request->file('cv')->getClientOriginalExtension();
+        $cvname = strtolower($request->name) . '-cv-' . date('Y m d - h i s') . '.' . $ex;
+        $request->file('cv')->move(public_path('uploads/cv'), $cvname);
+
+        $data['cv'] = $cvname;
+    }
 }
